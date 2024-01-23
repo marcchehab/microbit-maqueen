@@ -1,76 +1,70 @@
 import microbit
 import machine
 import utime
-import neopixel
 
-class Maqueen:
+def set_led(lednumber, value):
+	"""Enable or disable the front LEDS
+
+	Args:
+			lednumber (int): 0 = left LED, 1 = right LED
+			value (int): 0 = off, 1 = on
 	"""
-	Python class for DFRobot Micro:maqueen platform
-	https://www.dfrobot.com/product-1783.html
-	Author: Krzysztof Sawicki <krzysztof@rssi.pl>
-	License: GNU
+	if lednumber == 0:
+		microbit.pin8.write_digital(value)
+	elif lednumber == 1:
+		microbit.pin12.write_digital(value)
+
+def read_distance():
 	"""
-	def __init__(self):
-		self.rgbleds = neopixel.NeoPixel(microbit.pin15, 4)
-		print("MAQUEEN initialized")
+	Reads distance from HC SR04 sensor, result is in centimeters.
+	"""
+	divider = 42
+	maxtime = 250 * divider
+	microbit.pin2.read_digital()  # just for setting PULL_DOWN on pin2
+	microbit.pin1.write_digital(0)
+	utime.sleep_us(2)
+	microbit.pin1.write_digital(1)
+	utime.sleep_us(10)
+	microbit.pin1.write_digital(0)
 
-	def set_led(self, lednumber, value):
-		"""
-		Enable or disable the front LEDS
-		0 - left LED (P8)
-		1 - right LED (P12)
-		"""
-		if lednumber == 0:
-			microbit.pin8.write_digital(value)
-		elif lednumber == 1:
-			microbit.pin12.write_digital(value)
+	duration = machine.time_pulse_us(microbit.pin2, 1, maxtime)
+	distance = duration/divider
+	return distance
 
-	def read_distance(self):
-		"""
-		Reads distance from HC SR04 sensor
-		The result is in centimeters
-		Divider is taken from Makecode library for micro:maqueen
-		"""
-		divider = 42
-		maxtime = 250 * divider
-		microbit.pin2.read_digital()  # just for setting PULL_DOWN on pin2
-		microbit.pin1.write_digital(0)
-		utime.sleep_us(2)
-		microbit.pin1.write_digital(1)
-		utime.sleep_us(10)
-		microbit.pin1.write_digital(0)
+def read_patrol(which):
+	"""
+	Reads patrol sensor, returns 0 or 1.
 
-		duration = machine.time_pulse_us(microbit.pin2, 1, maxtime)
-		distance = duration/divider
-		return distance
+	Args:
+			which (int): 0 = left, 1 = right
+	"""
+	if which == 0:  # left
+		return microbit.pin13.read_digital()
+	elif which == 1:  # right
+		return microbit.pin14.read_digital()
 
-	def read_patrol(self, which):
-		"""
-		Reads patrol sensor
-		"""
-		if which == 0:  # left
-			return microbit.pin13.read_digital()
-		elif which == 1:  # right
-			return microbit.pin14.read_digital()
+def set_motor(motor, value):
+	"""
+	Controls the two motors
 
-	def set_motor(self, motor, value):
-		"""
-		Controls motor
-		motor: 0 - left motor, 1 - right motor
-		value: -255 to +255, the sign means direction
-		"""
-		data = bytearray(3)
-		if motor == 0:  # left motor
-			data[0] = 0
-		else:
-			data[0] = 2  # right motor is 2
-		if value < 0:  # ccw direction
-			data[1] = 1
-			value = -1*value
-		data[2] = value
-		microbit.i2c.write(0x10, data, False)  # 0x10 is i2c address of motor driver
+	Args:
+			motor (int): 0 = left, 1 = right
+			value (int): -255 (back) to +255 (forward)
+	"""
+	data = bytearray(3)
+	if motor == 0:  # left motor
+		data[0] = 0
+	else:
+		data[0] = 2  # right motor is 2
+	if value < 0:  # ccw direction
+		data[1] = 1
+		value = -1*value
+	data[2] = value
+	microbit.i2c.write(0x10, data, False)  # 0x10 is i2c address of motor driver
 
-	def motor_stop_all(self):
-		self.set_motor(0, 0)
-		self.set_motor(1, 0)
+def motor_stop_all():
+	"""Stops all motors
+	"""
+	set_motor(0, 0)
+	set_motor(1, 0)
 

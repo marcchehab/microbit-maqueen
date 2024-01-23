@@ -1,36 +1,40 @@
 # micromaqueen-python
-Python class for DFRobot Micro:Maqueen platform. 
+Python functions for DFRobot Micro:Maqueen platform. Main difference in this fork are docstrings and that it's not implemented as a class.
+
 ## Usage
 Sample program for testing front LEDs, reading distance, patrol and controlling motors:
 
-    import microbit
-    import maqueen
-    mq = Maqueen()
+```
+import microbit
+import maqueen
 
-	while True:
-	    mq.set_led(0, 1)
-	    microbit.sleep(1000)
-	    mq.set_led(1, 1)
-	    mq.set_led(0, 0)
-	    microbit.sleep(1000)
-	    mq.set_led(1, 0)
-	    for i in range(0, 10):
-		print("Distance: %d" % mq.read_distance())
-		microbit.sleep(1000)
+d = [-100, 50, 20, -200, 200, 40]
 
-	   for i in range(0, 10):
-               l = mq.read_patrol(0)
-               p = mq.read_patrol(1)
-               print("Patrol: %d %d" % (l, p))
-               microbit.sleep(1000)
+# Testing LEDs
+maqueen.set_led(0, 1)
+microbit.sleep(1000)
+maqueen.set_led(1, 1)
+microbit.sleep(1000)
+maqueen.set_led(0, 0)
+microbit.sleep(1000)
+maqueen.set_led(1, 0)
 
-	    d = [-100, 50, 20, -200, 200, 40]
-	    for i in d:
-	        mq.set_motor(0, i)
-	        microbit.sleep(1000)
-	        mq.set_motor(1, i)
-	        microbit.sleep(1000)
+# Reading distance
+distance = maqueen.read_distance()
+microbit.display.scroll(distance)
 
-	    mq.motor_stop_all()
+# Reading patrol sensors
+for i in range(0, 10):
+    l = maqueen.read_patrol(0)
+    maqueen.set_led(0, l == 1)
+    r = maqueen.read_patrol(1)
+    maqueen.set_led(1, r == 1)
+    microbit.sleep(1000)
 
+# Testing motors
+maqueen.set_motor(0,-255)
+maqueen.set_motor(1, 100)
+microbit.sleep(2000)
 
+maqueen.motor_stop_all()
+```
