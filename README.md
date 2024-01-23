@@ -1,5 +1,5 @@
-# micromaqueen-python
-Python functions for DFRobot Micro:Maqueen platform. Main difference in this fork are docstrings and that it's not implemented as a class.
+# microbit-maqueen
+Python functions for DFRobot Maqueen Robot. Main difference in this fork are docstrings and that it's not implemented as a class. Also, [maqueen_boilerplate.hex](maqueen_boilerplate.hex) is a project file you can directly use in [the microbit online editor](https://python.microbit.org/v/3/reference).
 
 ## Usage
 Sample program for testing front LEDs, reading distance, patrol and controlling motors:
