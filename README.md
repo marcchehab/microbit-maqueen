@@ -8,8 +8,6 @@ Sample program for testing front LEDs, reading distance, patrol and controlling 
 import microbit
 import maqueen
 
-d = [-100, 50, 20, -200, 200, 40]
-
 # Testing LEDs
 maqueen.set_led(0, 1)
 microbit.sleep(1000)
