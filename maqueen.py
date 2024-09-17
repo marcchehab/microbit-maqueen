@@ -28,7 +28,7 @@ def read_distance():
 	microbit.pin1.write_digital(0)
 
 	duration = machine.time_pulse_us(microbit.pin2, 1, maxtime)
-	distance = duration/divider
+	distance = duration/divider if duration >= 0 else 250
 	return distance
 
 def read_patrol(which):
